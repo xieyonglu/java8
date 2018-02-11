@@ -9,52 +9,55 @@ import java.util.concurrent.atomic.AtomicInteger;
  * QQ交流群:286081824
  ***************************************/
 public class AccumulatorRecursiveAction extends RecursiveAction {
-    private final int start;
 
-    private final int end;
+	private static final long serialVersionUID = 6050654247916950392L;
 
-    private final int[] data;
+	private final int start;
 
-    private final int LIMIT = 3;
+	private final int end;
 
-    public AccumulatorRecursiveAction(int start, int end, int[] data) {
-        this.start = start;
-        this.end = end;
-        this.data = data;
-    }
+	private final int[] data;
 
-    @Override
-    protected void compute() {
+	private final int LIMIT = 3;
 
-        if ((end - start) <= LIMIT) {
-            for (int i = start; i < end; i++) {
-                AccumulatorHelper.accumulate(data[i]);
-            }
-        } else {
-            int mid = (start + end) / 2;
-            AccumulatorRecursiveAction left = new AccumulatorRecursiveAction(start, mid, data);
-            AccumulatorRecursiveAction right = new AccumulatorRecursiveAction(mid, end, data);
-            left.fork();
-            right.fork();
-            left.join();
-            right.join();
-        }
-    }
+	public AccumulatorRecursiveAction(int start, int end, int[] data) {
+		this.start = start;
+		this.end = end;
+		this.data = data;
+	}
 
-    static class AccumulatorHelper {
+	@Override
+	protected void compute() {
 
-        private static final AtomicInteger result = new AtomicInteger(0);
+		if ((end - start) <= LIMIT) {
+			for (int i = start; i < end; i++) {
+				AccumulatorHelper.accumulate(data[i]);
+			}
+		} else {
+			int mid = (start + end) / 2;
+			AccumulatorRecursiveAction left = new AccumulatorRecursiveAction(start, mid, data);
+			AccumulatorRecursiveAction right = new AccumulatorRecursiveAction(mid, end, data);
+			left.fork();
+			right.fork();
+			left.join();
+			right.join();
+		}
+	}
 
-        static void accumulate(int value) {
-            result.getAndAdd(value);
-        }
+	static class AccumulatorHelper {
 
-        public static int getResult() {
-            return result.get();
-        }
+		private static final AtomicInteger result = new AtomicInteger(0);
 
-        static void rest() {
-            result.set(0);
-        }
-    }
+		static void accumulate(int value) {
+			result.getAndAdd(value);
+		}
+
+		public static int getResult() {
+			return result.get();
+		}
+
+		static void rest() {
+			result.set(0);
+		}
+	}
 }

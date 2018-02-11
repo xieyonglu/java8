@@ -9,7 +9,9 @@ import java.util.concurrent.RecursiveTask;
  ***************************************/
 public class AccumulatorRecursiveTask extends RecursiveTask<Integer> {
 
-    private final int start;
+	private static final long serialVersionUID = 6567531872502917664L;
+
+	private final int start;
 
     private final int end;
 
